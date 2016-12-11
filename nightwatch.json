@@ -1,0 +1,53 @@
+{
+  "src_folders": [
+    "test/acceptance/tests"
+  ],
+  "page_objects_path": "test/acceptance/pages",
+  "globals_path": "config/globals.js",
+  "output_folder": "output/reports",
+  "selenium": {
+    "start_process": true,
+    "server_path": "bin/selenium-server-standalone-3.0.1.jar",
+    "port": 4444,
+    "log_path": "output",
+    "cli_args": {
+      "webdriver.chrome.driver": "./bin/chromedriver",
+      "webdriver.gecko.driver": "",
+      "webdriver.edge.driver": ""
+    }
+  },
+  "test_workers": {
+    "enabled": true,
+    "workers": "auto"
+  },
+  "test_settings": {
+    "default": {
+      "launch_url": "https://www.jakescomputerhospital.com",
+      "silent": true,
+      "screenshots": {
+        "enabled": true,
+        "on_failure": true,
+        "on_error": false,
+        "path": "output/screenshots"
+      },
+      "desiredCapabilities": {
+        "browserName": "chrome",
+        "chromeOptions": {
+          "args": [
+            "--no-sandbox"
+          ]
+        }
+      }
+    },
+    "firefox": {
+      "desiredCapabilities": {
+        "browserName": "firefox"
+      }
+    },
+    "edge": {
+      "desiredCapabilities": {
+        "browserName": "MicrosoftEdge"
+      }
+    }
+  }
+}

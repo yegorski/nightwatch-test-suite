@@ -1,0 +1,24 @@
+{
+  "name": "jch-nightwatch",
+  "version": "1.0.0",
+  "description": "Nightwatch acceptance tests for Jake's Computer Hospital website.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/nightwatch"
+  },
+  "keywords": [
+    "nightwatch",
+    "nightwatch acceptance tests",
+    "acceptance testing"
+  ],
+  "author": "Yegor Ius",
+  "license": "ISC",
+  "dependencies": {
+    "chromedriver": "^2.25.2",
+    "config": "^1.24.0",
+    "nightwatch": "^0.9.9"
+  }
+}
