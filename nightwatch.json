@@ -3,7 +3,7 @@
     "test/acceptance/tests"
   ],
   "page_objects_path": "test/acceptance/pages",
-  "globals_path": "config/globals.js",
+  "globals_path": "test/acceptance/config/globals.js",
   "output_folder": "output/reports",
   "selenium": {
     "start_process": true,

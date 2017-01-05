@@ -1,13 +1,27 @@
-var config = require('config');
+var commonSelectors = require('../selectors/common');
 
-module.exports = (client) => {
-  this.url = `${config.baseUrl}/testimonials`;
-
+module.exports = function(client) {
   this.selectors = {
-    home: 'h2 a[href="/welcome"]'
+    pageLoaded: '.horizontalrule-block'
   };
+
+  this.url = '/testimonials';
 
   this.nav = () => {
-    client.url(this.url);
+    client.url(`${client.globals.url}${this.url}`);
+    return client;
   };
+
+  this.verifyPageLoaded = () => {
+    client
+      .waitForElementVisible(this.selectors.pageLoaded)
+      .waitForElementVisible(commonSelectors.footer.footerImage);
+    return client;
+  };
+
+  this.navAndVerify = () => {
+    this.nav();
+    this.verifyPageLoaded();
+    return client;
+  }
 };
