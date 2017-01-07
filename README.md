@@ -16,7 +16,7 @@ Ok so that's it on the usage of this repo! But this readme is not so much for de
 
 The end goal is for you to get started with your own browser automation project.
 
-The example I'm working with is [Jake’s Computer Hospital](https://www.jakescomputerhospital.com/contact/) website. I've written a set of UI acceptance tests which validate the functionality of the site. The tests are written in Nightwatch.js, a popular Node.js browser automation framework. 
+The example I'm working with is [Jake’s Computer Hospital](https://www.jakescomputerhospital.com/) website. I've written a set of UI acceptance tests which validate the functionality of the site. The tests are written in Nightwatch.js, a popular Node.js browser automation framework. 
 
 I'll walk through how I got my environment and Nightwatch setup, and show some highlights of the repo.
 
@@ -24,17 +24,17 @@ I'll walk through how I got my environment and Nightwatch setup, and show some h
 
 # Getting Started with Nightwatch
 
-Most of the steps you're likely to skip, if you already have Node and npm installed, but I'll start from scratch regardless. 
+Most of the steps you're likely to skip, if you already have Node and NPM installed, but I'll start from scratch regardless. 
 
 ## Setup Development Environment 
 
-1. Install [Node.js](https://nodejs.org/en/download/) and NPM (comes with lastest None.js)
+1. Install [Node.js](https://nodejs.org/en/download/) and NPM (comes with latest Node.js)
   1. Here is a good [blog post](http://blog.teamtreehouse.com/install-node-js-npm-mac) on installing both on your Mac
 1. I'm working with git (for obvious reasons, given where you're reading this :bowtie: ), so go ahead and create a GitHub repo
 1. [Install git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 1. Run `git clone path-to-your-new-repo` to pull down the repo locally
 1. `cd` into your repo and run `npm init` in the root of your repo, then follow the prompts
-  1. Note that you don't really need to do this. I'm using npm to seamlessly install the `nightwatch` dependency and have npm run my test script
+  1. Note that you don't really need to do this. I'm using NPM to seamlessly install the `nightwatch` dependency and have NPM run my test script
 1. Install nightwatch by running the following (also in the root of your repo): 
   1. `npm install nightwatch --save`
   1. Note that if you're writing acceptance tests for an existing app, you'd do yourself and your team a favor by not install nightwatch in the `dependencies` but rather in the `devDependencies` of the app. `devDependencies` are not installed in production, but are only used for testing and debugging. Do this instead:
@@ -67,13 +67,13 @@ Because Nightwatch is a Node.js wrapper around Selenium, it needs either Seleniu
 
 1. With everything you need installed and downloaded, now create a `nightwatch.json` file in the root of your project
   1. Here is the [nightwatch.json](https://github.com/yegorski/jch-nightwatch/blob/master/nightwatch.json) that I have for my project. See what each of the settings do on the [Nightwatch Getting Started](http://nightwatchjs.org/getingstarted#basic-settings) page
-  1. Couple key points of the config:
+  1. Couple key points on the config:
     1. Tell Nightwatch to start up Selenium on each test run:
       1. `"start_process": true,`
       1. Without doing this, you’d need to download a separate driver, require it, and start it explicitly inside your tests. See [Nightwatch Getting Started](http://nightwatchjs.org/getingstarted#chromedriver) guide for more
     1. Tell Nightwatch to run tests in parallel by setting the `"test_workers"` section like I have in my [nightwatch.json](https://github.com/yegorski/jch-nightwatch/blob/master/nightwatch.json#L19)
-1. Create a configuration file that will contain some global variables that Nightwatch will use. I called mine `globals.js`. The convention is to have a config folder where that file - among with another config we'll discuss later - will live
-1. Populate globals.js with the configuration variables you'd like to have. See here LINK for a list of useful variables. You can define any custom global vars as well
+1. Create a configuration file that will contain some global variables that Nightwatch will use. I called mine `globals.js`. The convention is to have a config folder where that file - among with any other configuration you may want - will live
+1. Populate globals.js with the configuration variables you'd like to have. See [here]() for a list of useful variables. You can define any custom global vars as well
 1. Here’s the simple [config/globals.js](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/config/globals.js) file I have
 
 ## Write Test Harness
@@ -95,7 +95,7 @@ Once you have a framework in place, you are ready to start composing tests.
 There are several techniques I used which I'd like to point out and discuss. 
 
 ### Adding Pages Directly on Browser Object
-Nightwatch looks in the `pages` directory and adds them on `browser.page` object (or `client.page` in my case). This is a bit quirky of me, but I think it's a little verbose to say `browser.page.myPage()`. So I have the following function that I call in the [global beforeEach hook](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/config/globals.js#L34) which allows me to write this instead: `browser.myPage`:
+Nightwatch looks in the `pages` directory and adds them on `browser.page` object (or `client.page` in my case). This is a bit quirky of me, but I think it's a little verbose to say `browser.page.myPage()`. So I have the following function that I call in the [global beforeEach hook](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/config/globals.js#L34) which allows me to write `browser.myPage` instead:
 ```
 this.addPageObjectsOnClient = () => {
   var i;
@@ -155,10 +155,10 @@ this.hoverAndClick = (selector) => {
 };
 ```
 
-Note that I'm returning the `client` object so that I can still chain commands just like navite Nightwatch methods do.
+Note that I'm returning the `client` object so that I can still chain commands just like native Nightwatch methods do.
 
 ### Encapsulating Actions Inside Pages
-The concept of [page objects](http://webdriver.io/guide/testrunner/pageobjects.html), implies having objects which perform actions on elements that the page is “responsible” for. I'd just like to reiterate this concept here by providing an example. 
+The concept of [page objects](http://webdriver.io/guide/testrunner/pageobjects.html) implies having objects which perform actions on elements that the page is “responsible” for. I'd just like to reiterate this concept here by providing an example. 
 My ["Contact Us" page object](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/pages/contact.js) has the following methods:
 
 * nav: navigate to the page
