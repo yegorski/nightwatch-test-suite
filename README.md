@@ -51,16 +51,16 @@ Because Nightwatch is a Node.js wrapper around Selenium, it needs either Seleniu
 1. Tell Nightwatch to use the Selenium version you just downloaded as well as where the drivers of your choosing reside, in [nightwatch.json](https://github.com/yegorski/jch-nightwatch/blob/master/nightwatch.json#L14):
 ```
 "selenium": {
-    "start_process": true,
-    "server_path": "bin/selenium-server-standalone-3.0.1.jar",
-    "port": 4444,
-    "log_path": "output",
-    "cli_args": {
-      "webdriver.chrome.driver": "./bin/chromedriver",
-      "webdriver.gecko.driver": "",
-      "webdriver.edge.driver": ""
-    }
-  },
+  "start_process": true,
+  "server_path": "bin/selenium-server-standalone-3.0.1.jar",
+  "port": 4444,
+  "log_path": "output",
+  "cli_args": {
+    "webdriver.chrome.driver": "./bin/chromedriver",
+    "webdriver.gecko.driver": "",
+    "webdriver.edge.driver": ""
+  }
+},
 ```
 
 ## Configure Nightwatch
