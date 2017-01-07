@@ -98,19 +98,19 @@ There are several techniques I used which I'd like to point out and discuss.
 Nightwatch looks in the `pages` directory and adds them on `browser.page` object (or `client.page` in my case). This is a bit quirky of me, but I think it's a little verbose to say `browser.page.myPage()`. So I have the following function that I call in the [global beforeEach hook](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/config/globals.js#L34) which allows me to write this instead: `browser.myPage`:
 ```
 this.addPageObjectsOnClient = () => {
-    var i;
-    var len;
-    var pageFilesPath = path.join(__dirname, '../pages');
-    var pageList = fs.readdirSync(pageFilesPath);
-    var pageName;
+  var i;
+  var len;
+  var pageFilesPath = path.join(__dirname, '../pages');
+  var pageList = fs.readdirSync(pageFilesPath);
+  var pageName;
 
-    for (i = 0, len = pageList.length; i < len; i++) {
-      if (path.extname(pageList[i]) === '.js') {
-        pageName = pageList[i].split('.js')[0];
-        client[pageName] = client.page[pageName]();
-      }
+  for (i = 0, len = pageList.length; i < len; i++) {
+    if (path.extname(pageList[i]) === '.js') {
+      pageName = pageList[i].split('.js')[0];
+      client[pageName] = client.page[pageName]();
     }
-  };
+  }
+};
 ```
 
 ### “Overriding” Nightwatch Actions
@@ -118,41 +118,41 @@ My previous experience with browser automation landed me in place where I did a 
 
 So I wrote the following set of utility methods in [lib/utils.js](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/lib/utils.js#L20-L54) which encapsulate that logic (also so that I don't forget to wait for an element before performing the action):
 ```
-  this.click = (selector) => {
-    client
-      .waitForElementVisible(selector)
-      .click(selector);
-    return client;
-  };
+this.click = (selector) => {
+  client
+    .waitForElementVisible(selector)
+    .click(selector);
+  return client;
+};
 
-  this.clearValue = (selector) => {
-    client
-      .waitForElementVisible(selector)
-      .clearValue(selector);
-    return client;
-  };
+this.clearValue = (selector) => {
+  client
+    .waitForElementVisible(selector)
+    .clearValue(selector);
+  return client;
+};
 
-  this.setValue = (selector, value) => {
-    client
-      .waitForElementVisible(selector)
-      .setValue(selector, value);
-    return client;
-  };
+this.setValue = (selector, value) => {
+  client
+    .waitForElementVisible(selector)
+    .setValue(selector, value);
+  return client;
+};
 
-  this.hover = (selector) => {
-    client
-      .waitForElementVisible(selector)
-      .moveToElement(selector, 2, 2);
-    return client;
-  };
+this.hover = (selector) => {
+  client
+    .waitForElementVisible(selector)
+    .moveToElement(selector, 2, 2);
+  return client;
+};
 
-  this.hoverAndClick = (selector) => {
-    client
-      .waitForElementVisible(selector)
-      .moveToElement(selector, 2, 2);
-    this.click(client, selector);
-    return client;
-  };
+this.hoverAndClick = (selector) => {
+  client
+    .waitForElementVisible(selector)
+    .moveToElement(selector, 2, 2);
+  this.click(client, selector);
+  return client;
+};
 ```
 
 Note that I'm returning the `client` object so that I can still chain commands just like navite Nightwatch methods do.
