@@ -78,35 +78,113 @@ Because Nightwatch is a Node.js wrapper around Selenium, it needs either Seleniu
 
 ## Write Test Harness
 Nightwatch has several directories that it looks for. Those include
-tests: the tests it runs
-pages: page objects that are great for encapsulating logic for each page
-custom_commands: functions you can define to invoke inside your tests
-globals: the config file we already discussed
-The site I'm testing is simple and only has a few page objects. LINK. I did not define any custom commands. Instead I have a “lib” folder where I defined the helper functions I needed in a “utils.js” file. 
+
+* "src_folders": tests to run
+* "page_objects_path": page objects that are great for encapsulating logic for each page
+* "custom_commands_path": functions you can define to invoke inside your tests
+* "globals_path": globals.js file we already discussed
+
+My approach:
+
+1. The site I'm testing is simple so my test suite has only a few [page objects](https://github.com/yegorski/jch-nightwatch/tree/master/test/acceptance/pages)
+1. I did not define any custom commands. Instead I have a [lib/utils.js](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/lib/utils.js) file where I defined the helper functions I need
+
 Once you have a framework in place, you are ready to start composing tests. 
 
-Test Harness Highlights 
-There are several approaches to writing tests that I took which I'd like to point out and discuss. 
+## Test Harness Highlights 
+There are several techniques I used which I'd like to point out and discuss. 
 
-Adding Pages Directly on Browser Object
-Nightwatch looks in the “pages” directory and adds them on “browser.page” object (or “client.page” in my case). This is a bit quirky of me but I think it's a little verbose to say “browser.page.myPage()”. So I have the following function that I call in the global before hook which allows me to write this instead: “browser.myPage”:
-CODE HERE
+### Adding Pages Directly on Browser Object
+Nightwatch looks in the `pages` directory and adds them on `browser.page` object (or `client.page` in my case). This is a bit quirky of me, but I think it's a little verbose to say `browser.page.myPage()`. So I have the following function that I call in the [global beforeEach hook](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/config/globals.js#L34) which allows me to write this instead: `browser.myPage`:
+```
+this.addPageObjectsOnClient = () => {
+    var i;
+    var len;
+    var pageFilesPath = path.join(__dirname, '../pages');
+    var pageList = fs.readdirSync(pageFilesPath);
+    var pageName;
 
-“Overriding” Nightwatch Actions
-My previous experience with browser automation landed me in place where I did a lot of “waitForElementVisible” calls prior to clicking on an element. This quickly made my code not so DRY, as I needed 2 lines each time I wanted to perform an action on an element;
-INSERT CODE
-So I wrote the following set of utility methods which encapsulate that logic (also so that I don't forget to wait for an element before performing the action):
-INSERT CODE
+    for (i = 0, len = pageList.length; i < len; i++) {
+      if (path.extname(pageList[i]) === '.js') {
+        pageName = pageList[i].split('.js')[0];
+        client[pageName] = client.page[pageName]();
+      }
+    }
+  };
+```
 
-Encapsulating Actions Inside Pages
-The concept of page objects LINK, implies having objects which perform actions on elements that the page is “responsible” for. I'd just like to reiterate this concept here  providing an example. 
-The home page LINK has the following methods:
-nav: navigate to the page
-verifyLoaded: check that the page is loaded 
-navAndVerify: a combination of the above 2 methods 
-Since there aren't a lot of actions to take, that's really all the methods the page needs. Notice that there's a search button, and as soon as “performSearch” is executed, the next step is handed off to the search page now. It's a separation of concerns at the page objects level. 
+### “Overriding” Nightwatch Actions
+My previous experience with browser automation landed me in place where I did a lot of `browser.waitForElementVisible()` calls prior to clicking on an element. This quickly made my code not so DRY, as I needed 2 lines each time I wanted to perform an action on an element.
 
-Global afterEach Hook With Error Logging
-I've played around with Nightwatch error handling and ran into an issue described here LINK.
+So I wrote the following set of utility methods in [lib/utils.js](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/lib/utils.js#L20-L54) which encapsulate that logic (also so that I don't forget to wait for an element before performing the action):
+```
+  this.click = (selector) => {
+    client
+      .waitForElementVisible(selector)
+      .click(selector);
+    return client;
+  };
+
+  this.clearValue = (selector) => {
+    client
+      .waitForElementVisible(selector)
+      .clearValue(selector);
+    return client;
+  };
+
+  this.setValue = (selector, value) => {
+    client
+      .waitForElementVisible(selector)
+      .setValue(selector, value);
+    return client;
+  };
+
+  this.hover = (selector) => {
+    client
+      .waitForElementVisible(selector)
+      .moveToElement(selector, 2, 2);
+    return client;
+  };
+
+  this.hoverAndClick = (selector) => {
+    client
+      .waitForElementVisible(selector)
+      .moveToElement(selector, 2, 2);
+    this.click(client, selector);
+    return client;
+  };
+```
+
+Note that I'm returning the `client` object so that I can still chain commands just like navite Nightwatch methods do.
+
+### Encapsulating Actions Inside Pages
+The concept of [page objects](http://webdriver.io/guide/testrunner/pageobjects.html), implies having objects which perform actions on elements that the page is “responsible” for. I'd just like to reiterate this concept here by providing an example. 
+My ["Contact Us" page object](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/pages/contact.js) has the following methods:
+
+* nav: navigate to the page
+* verifyLoaded: check that the page is loaded
+* navAndVerify: a combination of the above 2 methods
+* fillOuForm: populates the form fields based on what opts are passed in
+* submitForm: call `fillOutForm` then submits the form
+* clearForm: clears all fields
+
+Having granular methods like these is great if you don't want to remember how the page object performs the actions that it's responsible for. You shouldn't care how the actions are performed. The future you doesn't need to do any mental parsing to understand how exactly to perform each action. It should be a one-line call.
+
+### Global afterEach Hook With Error Logging
+I've played around with Nightwatch error handling and ran into an issue described [here](https://github.com/nightwatchjs/nightwatch/issues/1103).
+
 In an attempt to have Nightwatch report errors that would otherwise be swallowed, I added the following afterEach hook:
-FILE
+```
+afterEach: (client, done) => {
+  var encounteredFailures = client.currentTest.results.errors > 0 || client.currentTest.results.failed > 0;
+  if (encounteredFailures && !client.sessionId) {
+    console.log('browser.currentTest.results.errors:', client.currentTest.results.errors);
+    console.log('browser.currentTest.results.failed:', client.currentTest.results.failed);
+    console.log('Session already ended.');
+    return done();
+  }
+  client.end(done);
+}
+```
+
+However, I've yet to see if this approach is successful in catching errors that would otherwise be swallowed up.
