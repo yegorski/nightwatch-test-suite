@@ -38,6 +38,13 @@ module.exports = {
 
   afterEach: (client, done) => {
     // chromedriver.stop();
+    var encounteredFailures = client.currentTest.results.errors > 0 || client.currentTest.results.failed > 0;
+    if (encounteredFailures && !client.sessionId) {
+      console.log('browser.currentTest.results.errors:', client.currentTest.results.errors);
+      console.log('browser.currentTest.results.failed:', client.currentTest.results.failed);
+      console.log('Session already ended.');
+      return done();
+    }
     client.end(done);
   }
 };
