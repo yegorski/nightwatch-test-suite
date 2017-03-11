@@ -1,41 +1,46 @@
 var commonSelectors = require('../../selectors/common');
 
-module.exports = {
-  'Verify able to open Home page': (client) => {
-    client.home.navAndVerify();
-  },
+describe('/welcome Page Links', function () {
+  before(function (client, done) {
+    client.globals.init(client, done);
+  });
 
-  'Verify able to navigate to the Home page': (client) => {
+  after(function (client, done) {
+    client.globals.teardown(client, done);
+  });
+
+  it('should be able to navigate to the Home page', function (client) {
     client
+      .home.navAndVerify()
       .util.click(commonSelectors.header.home)
-      .home.verifyPageLoaded()
-      .home.nav();
-  },
+      .home.verifyPageLoaded();
+  });
 
-  'Verify able to navigate to the About page': (client) => {
+  it('should be able to navigate to the About page', function (client) {
     client
+      .home.navAndVerify()
       .util.click(commonSelectors.header.about)
-      .about.verifyPageLoaded()
-      .home.nav();
-  },
+      .about.verifyPageLoaded();
+  });
 
-  'Verify able to navigate to the Blog page': (client) => {
+  it('should be to navigate to the Blog page', function (client) {
     client
+      .home.navAndVerify()
       .util.click(commonSelectors.header.blog)
-      .blog.verifyPageLoaded()
-      .home.nav();
-  },
+      .blog.verifyPageLoaded();
+  });
 
-  'Verify able to navigate to the Testimonials page': (client) => {
+  it('should be able to navigate to the Testimonials page', function (client) {
     client
+      .home.navAndVerify()
       .util.click(commonSelectors.header.testimonials)
-      .testimonials.verifyPageLoaded()
-      .home.nav();
-  },
+      .testimonials.verifyPageLoaded();
+  });
 
-  'Verify able to navigate to the Contact page': (client) => {
+  it('should be able to navigate to the Contact page', function (client) {
     client
+      .home.navAndVerify()
       .util.click(commonSelectors.header.contact)
       .contact.verifyPageLoaded();
-  }
-};
+  });
+});

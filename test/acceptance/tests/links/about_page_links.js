@@ -1,42 +1,46 @@
 var commonSelectors = require('../../selectors/common');
 
-module.exports = {
-  'Verify able to open Home page': (client) => {
-    client.about.navAndVerify();
-  },
+describe('/about Page Links', function () {
+  before(function (client, done) {
+    client.globals.init(client, done);
+  });
 
-  'Verify able to navigate to the Home page': (client) => {
+  after(function (client, done) {
+    client.globals.teardown(client, done);
+  });
+
+  it('should be able to navigate to the Home page', function (client) {
     client
+      .about.navAndVerify()
       .util.click(commonSelectors.header.home)
-      .home.verifyPageLoaded()
-      .about.nav();
-  },
+      .home.verifyPageLoaded();
+  });
 
-  'Verify able to navigate to the About page': (client) => {
+  it('should be able to navigate to the About page', function (client) {
     client
+      .about.navAndVerify()
       .util.click(commonSelectors.header.about)
-      .about.verifyPageLoaded()
-      .about.nav();
-  },
+      .about.verifyPageLoaded();
+  });
 
-  'Verify able to navigate to the Blog page': (client) => {
+  it('should be to navigate to the Blog page', function (client) {
     client
+      .about.navAndVerify()
       .util.click(commonSelectors.header.blog)
-      .blog.verifyPageLoaded()
-      .about.nav();
-  },
+      .blog.verifyPageLoaded();
+  });
 
-  // Testimonials page
-  'Verify able to navigate to the Testimonials page': (client) => {
+  it('should be able to navigate to the Testimonials page', function (client) {
     client
+      .about.navAndVerify()
       .util.click(commonSelectors.header.testimonials)
-      .testimonials.verifyPageLoaded()
-      .about.nav();
-  },
+      .testimonials.verifyPageLoaded();
+  });
 
-  'Verify able to navigate to the Contact page': (client) => {
+  it('should be able to navigate to the Contact page', function (client) {
     client
+      .about.navAndVerify()
       .util.click(commonSelectors.header.contact)
       .contact.verifyPageLoaded();
-  }
-};
+  });
+});

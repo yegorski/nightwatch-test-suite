@@ -52,6 +52,4 @@ module.exports = function(client) {
     this.click(client, selector);
     return client;
   };
-
-
 };

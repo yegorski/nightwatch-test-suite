@@ -5,6 +5,13 @@
   "page_objects_path": "test/acceptance/pages",
   "globals_path": "test/acceptance/config/globals.js",
   "output_folder": "output/reports",
+  "test_runner": {
+    "type": "mocha",
+    "options": {
+      "ui": "bdd",
+      "reporter": "spec"
+    }
+  },
   "selenium": {
     "start_process": true,
     "server_path": "bin/selenium-server-standalone-3.0.1.jar",

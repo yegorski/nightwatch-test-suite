@@ -48,12 +48,21 @@ var incompleteFields = {
   }
 };
 
-module.exports = {
-  'Verify able to open Contact page': (client) => {
-    client.contact.navAndVerify();
-  },
+describe('Submit Form', function () {
+  before(function (client, done) {
+    client.globals.init(client, done);
+  });
 
-  'Verify unable to submit form with missing required fields': (client) => {
+  beforeEach(function (client, done) {
+    client.contact.navAndVerify();
+    done();
+  });
+
+  after(function (client, done) {
+    client.globals.teardown(client, done);
+  });
+
+  it('should be unable to submit form with missing required fields', function (client) {
     Object.keys(incompleteFields).forEach((fields) => {
       client
         .contact.submitForm(incompleteFields[fields])
@@ -63,9 +72,10 @@ module.exports = {
 
       client.contact.clearForm();
     });
-  },
+    client.url('https://google.com')
+  });
 
-  'Verify able to submit form after populating all fields': (client) => {
+  it('should be able to submit form after populating all fields', function (client) {
     var fields = {
       firstName: 'Gandalf',
       lastName: 'The Grey',
@@ -80,5 +90,5 @@ module.exports = {
       .waitForElementVisible(client.contact.selectors.confirmationMessage)
       .expect.element(client.contact.selectors.confirmationMessage)
       .text.to.contain('Thanks for reaching out!').before(2000);
-  }
-};
+  });
+});

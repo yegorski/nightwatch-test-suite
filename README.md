@@ -173,18 +173,162 @@ Having granular methods like these is great if you don't want to remember how th
 ### Global afterEach Hook With Error Logging
 I've played around with Nightwatch error handling and ran into an issue described [here](https://github.com/nightwatchjs/nightwatch/issues/1103).
 
-In an attempt to have Nightwatch report errors that would otherwise be swallowed, I added the following afterEach hook:
+In an attempt to have Nightwatch report errors that would otherwise be swallowed, I added the following teardown step:
+
 ```
-afterEach: (client, done) => {
-  var encounteredFailures = client.currentTest.results.errors > 0 || client.currentTest.results.failed > 0;
-  if (encounteredFailures && !client.sessionId) {
-    console.log('browser.currentTest.results.errors:', client.currentTest.results.errors);
-    console.log('browser.currentTest.results.failed:', client.currentTest.results.failed);
-    console.log('Session already ended.');
-    return done();
+var logError = function (client, callback) {
+  client.end(function () {
+    console.log(client.err);
+    callback();
+  });
+};
+
+var closeBrowser = function (client, callback) {
+  if (client.sessionId) {
+    client.end(function () {
+      callback();
+    });
+  } else {
+    callback();
   }
-  client.end(done);
+};
+
+teardown: (client, done) => {
+    if (client.err) {
+      logError(client, done);
+    }
+    closeBrowser(client, done);
+  }
 }
 ```
 
-However, I've yet to see if this approach is successful in catching errors that would otherwise be swallowed up.
+Granted, for this to work a test much need to explicitly set `client.err`. I've yet to see if this approach is successful in catching errors that would otherwise be swallowed up.
+
+### Using Mocha Test Runner with Nightwatch.js
+
+I've had a couple thoughts come up recently, which stemmed from the 2 challenges I faced in my Agile scrum team:
+
+1. How can our Nightwatch be more robust and report failures quicker?
+1. How can the developers on my team be enabled to write more acceptance (read: browser automation) tests?
+
+I decided that a sound approach is to make the tests bite-sized, such that only a very specific scenario was exercised per test. Such scenarios would need be independent, such that - should a scenario fail - it can be reran on it's own, without requiring the `before` hook to be executed again.
+
+To achieve this, I experimented (with the yet-experimental version) of the [Nightwatch mocha test runner](http://nightwatchjs.org/guide#using-mocha). Doing so solves the challenges I faced:
+
+1. Each Nightwatch test case would be self-contained, small, and fail fast. In my opinion, the mocha syntax is clearer in communicating this paradigm shift.
+2. Mocha syntax is a familiar convention to the developers who are already writing unit and integration tests with mocha/chai.
+
+Place this additional setting in the root of your nightwatch.json file (adjust accordingly if you are using nightwatch.js):
+
+```
+  "test_runner" : {
+    "type" : "mocha",
+    "options" : {
+      "ui" : "bdd",
+      "reporter" : "spec"
+    }
+  }
+```
+
+I chose the `spec` runner because I believe it provides a clear test output.
+
+Each test needs to be altered to follow the describe-it approach. Here's an example of before and after:
+
+Before:
+
+```
+module.exports = {
+  'Verify able to open Contact page': (client) => {
+    client.contact.navAndVerify();
+  },
+
+  'Verify unable to submit form with missing required fields': (client) => {
+    Object.keys(incompleteFields).forEach((fields) => {
+      client
+        .contact.submitForm(incompleteFields[fields])
+        .waitForElementVisible(incompleteFields[fields].errorSelector)
+        .expect.element(incompleteFields[fields].errorSelector)
+        .text.to.equal(incompleteFields[fields].error).before(2000);
+
+      client.contact.clearForm();
+    });
+  },
+
+  'Verify able to submit form after populating all fields': (client) => {
+    var fields = {
+      firstName: 'Gandalf',
+      lastName: 'The Grey',
+      emailAddress: 'mithrandir@rivendell.org',
+      subject: 'Take heed',
+      message: 'All that we can do is decide what to do with the time that is given to us.',
+    };
+
+    client
+      .contact.fillOuForm(fields)
+      .contact.submitForm(fields)
+      .waitForElementVisible(client.contact.selectors.confirmationMessage)
+      .expect.element(client.contact.selectors.confirmationMessage)
+      .text.to.contain('Thanks for reaching out!').before(2000);
+  }
+};
+```
+
+After:
+
+```
+describe('Submit Form', function () {
+  before(function (client, done) {
+    client.globals.init(client, done);
+  });
+  
+  beforeEach(function (client, done) {
+    client.contact.navAndVerify();
+    done();
+  });
+
+  after(function (client, done) {
+    client.globals.teardown(client, done);
+  });
+
+  it('should be unable to submit form with missing required fields', function (client) {
+    Object.keys(incompleteFields).forEach((fields) => {
+      client
+        .contact.submitForm(incompleteFields[fields])
+        .waitForElementVisible(incompleteFields[fields].errorSelector)
+        .expect.element(incompleteFields[fields].errorSelector)
+        .text.to.equal(incompleteFields[fields].error).before(2000);
+
+      client.contact.clearForm();
+    });
+  });
+
+  it('should be able to submit form after populating all fields', function (client) {
+    var fields = {
+      firstName: 'Gandalf',
+      lastName: 'The Grey',
+      emailAddress: 'mithrandir@rivendell.org',
+      subject: 'Take heed',
+      message: 'All that we can do is decide what to do with the time that is given to us.',
+    };
+
+    client
+      .contact.fillOuForm(fields)
+      .contact.submitForm(fields)
+      .waitForElementVisible(client.contact.selectors.confirmationMessage)
+      .expect.element(client.contact.selectors.confirmationMessage)
+      .text.to.contain('Thanks for reaching out!').before(2000);
+  });
+});
+```
+
+What gives, there's no functional change?
+
+Yes, however, the following points become much clearer:
+
+1. The before and after hooks are executed per test file
+1. The beforeEach and afterEach hooks are executed per `it` scenario
+1. Each `it` is isolated and its success or failure does not affect other scenarios
+
+In this case I have a need to perform this navigation before each test `client.contact.navAndVerify();`. Should the previous scenario fail, consecutive scenarios will continue to run.
+
+While this may be achieved using the standard Nightwatch runner with `module.exports` syntax, I don't think it communicates the intent as clearly.

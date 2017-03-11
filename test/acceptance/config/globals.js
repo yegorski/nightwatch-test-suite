@@ -1,5 +1,5 @@
 /*
- * Requiring chromedriver is another way of communicating with teh browser.
+ * Requiring chromedriver is another way of communicating with the browser.
  * Do this when you do not start up Selenium when Nightwatch runs via the following steps:
  * Install chromedriver:
  *   npm install chromedriver --save
@@ -20,6 +20,23 @@
 
 var utils = require('../lib/utils');
 
+var logError = function (client, callback) {
+  client.end(function () {
+    console.log(client.err);
+    callback();
+  });
+};
+
+var closeBrowser = function (client, callback) {
+  if (client.sessionId) {
+    client.end(function () {
+      callback();
+    });
+  } else {
+    callback();
+  }
+};
+
 module.exports = {
   throwOnMultipleElementsReturned: false,
 
@@ -27,7 +44,7 @@ module.exports = {
 
   url: 'https://www.jakescomputerhospital.com',
 
-  beforeEach: (client, done) => {
+  init: (client, done) => {
     // chromedriver.start();
 
     client.util = new utils(client);
@@ -36,15 +53,12 @@ module.exports = {
     done();
   },
 
-  afterEach: (client, done) => {
+  teardown: (client, done) => {
     // chromedriver.stop();
-    var encounteredFailures = client.currentTest.results.errors > 0 || client.currentTest.results.failed > 0;
-    if (encounteredFailures && !client.sessionId) {
-      console.log('browser.currentTest.results.errors:', client.currentTest.results.errors);
-      console.log('browser.currentTest.results.failed:', client.currentTest.results.failed);
-      console.log('Session already ended.');
-      return done();
+
+    if (client.err) {
+      logError(client, done);
     }
-    client.end(done);
+    closeBrowser(client, done);
   }
 };

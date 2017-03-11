@@ -1,44 +1,51 @@
 var commonSelectors = require('../../selectors/common');
 
-module.exports = {
-  'Verify able to open the sidebar': (client) => {
+describe('Siderbar Menu Links', function () {
+  before(function (client, done) {
+    client.globals.init(client, done);
+  });
+
+  after(function (client, done) {
+    client.globals.teardown(client, done);
+  });
+
+  it('should be able to navigate to the Home page', function (client) {
     client
       .home.navAndVerify()
-      .util.click(commonSelectors.header.openSidebar);
-  },
-
-  'Verify able to navigate to the Home page': (client) => {
-    client
+      .util.click(commonSelectors.header.openSidebar)
       .util.click(commonSelectors.sidebar.home)
-      .home.verifyPageLoaded()
-      .util.click(commonSelectors.header.openSidebar);
-  },
+      .home.verifyPageLoaded();
+  });
 
-  'Verify able to navigate to the About page': (client) => {
+  it('should be able to navigate to the About page', function (client) {
     client
-      .util.click(commonSelectors.sidebar.about)
-      .about.verifyPageLoaded()
-      .util.click(commonSelectors.header.openSidebar);
-  },
-
-  'Verify able to navigate to the Blog page': (client) => {
-    client
-      .util.click(commonSelectors.sidebar.blog)
-      .blog.verifyPageLoaded()
       .home.navAndVerify()
-      .util.click(commonSelectors.header.openSidebar);
-  },
+      .util.click(commonSelectors.header.openSidebar)
+      .util.click(commonSelectors.sidebar.about)
+      .about.verifyPageLoaded();
+  });
 
-  'Verify able to navigate to the Testimonials page': (client) => {
+  it('should be to navigate to the Blog page', function (client) {
     client
+      .about.navAndVerify()
+      .util.click(commonSelectors.header.openSidebar)
+      .util.click(commonSelectors.sidebar.blog)
+      .blog.verifyPageLoaded();
+  });
+
+  it('should be able to navigate to the Testimonials page', function (client) {
+    client
+      .blog.navAndVerify()
+      .util.click(commonSelectors.header.openSidebar)
       .util.click(commonSelectors.sidebar.testimonials)
-      .testimonials.verifyPageLoaded()
-      .util.click(commonSelectors.header.openSidebar);
-  },
+      .testimonials.verifyPageLoaded();
+  });
 
-  'Verify able to navigate to the Contact page': (client) => {
+  it('should be able to navigate to the Contact page', function (client) {
     client
+      .testimonials.navAndVerify()
+      .util.click(commonSelectors.header.openSidebar)
       .util.click(commonSelectors.sidebar.contact)
       .contact.verifyPageLoaded();
-  }
-};
+  });
+});

@@ -11,9 +11,9 @@
     "acceptance testing"
   ],
   "scripts": {
-    "test": "./node_modules/.bin/nightwatch"
+    "test": "./node_modules/.bin/nightwatch -t test/acceptance/tests/*"
   },
   "dependencies": {
-    "nightwatch": "^0.9.9"
+    "nightwatch": "^0.9.12"
   }
 }
