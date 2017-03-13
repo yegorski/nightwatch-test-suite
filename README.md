@@ -5,7 +5,8 @@ So you want to do browser automation. And you chose Nighwatch.js to do so. Read 
 
 # Usage
 ```
-git clone PATH
+git clone git@github.com:yegorski/jch-nightwatch.git
+cd jch-nightwatch
 npm i
 npm test
 ```
