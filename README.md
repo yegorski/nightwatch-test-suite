@@ -67,14 +67,14 @@ Because Nightwatch is a Node.js wrapper around Selenium, it needs either Seleniu
 ## Configure Nightwatch
 
 1. With everything you need installed and downloaded, now create a `nightwatch.json` file in the root of your project
-  1. Here is the [nightwatch.json](https://github.com/yegorski/jch-nightwatch/blob/master/nightwatch.json) that I have for my project. See what each of the settings do on the [Nightwatch Getting Started](http://nightwatchjs.org/getingstarted#basic-settings) page
-  1. Couple key points on the config:
-    1. Tell Nightwatch to start up Selenium on each test run:
-      1. `"start_process": true,`
-      1. Without doing this, you’d need to download a separate driver, require it, and start it explicitly inside your tests. See [Nightwatch Getting Started](http://nightwatchjs.org/getingstarted#chromedriver) guide for more
-    1. Tell Nightwatch to run tests in parallel by setting the `"test_workers"` section.
-      1. Note: I have it set to `false` because I'm using Nightwatch's mocha runner: [nightwatch.json](https://github.com/yegorski/jch-nightwatch/blob/master/nightwatch.json#L19)
-      1. See the note at the end of the `Using Mocha Test Runner with Nightwatch.js` section. 
+    1. Here is the [nightwatch.json](https://github.com/yegorski/jch-nightwatch/blob/master/nightwatch.json) that I have for my project. See what each of the settings do on the [Nightwatch Getting Started](http://nightwatchjs.org/getingstarted#basic-settings) page
+    1. Couple key points on the config:
+        1. Tell Nightwatch to start up Selenium on each test run:
+            1. `"start_process": true,`
+            1. Without doing this, you’d need to download a separate driver, require it, and start it explicitly inside your tests. See [Nightwatch Getting Started](http://nightwatchjs.org/getingstarted#chromedriver) guide for more
+        1. Tell Nightwatch to run tests in parallel by setting the `"test_workers"` section.
+            1. Note: I have it set to `false` because I'm using Nightwatch's mocha runner: [nightwatch.json](https://github.com/yegorski/jch-nightwatch/blob/master/nightwatch.json#L19)
+            1. See the note at the end of the `Using Mocha Test Runner with Nightwatch.js` section. 
 1. Create a configuration file that will contain some global variables that Nightwatch will use. I called mine `globals.js`. The convention is to have a config folder where that file - among with any other configuration you may want - will live
 1. Populate globals.js with the configuration variables you'd like to have. See [here]() for a list of useful variables. You can define any custom global vars as well
 1. Here’s the simple [config/globals.js](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/config/globals.js) file I have
