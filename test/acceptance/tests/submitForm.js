@@ -27,7 +27,7 @@ var incompleteFields = {
     lastName: 'The Grey',
     subject: 'Take heed',
     message: 'All that we can do is decide what to do with the time that is given to us.',
-    error: 'Emailaddress is required.',
+    error: 'Email Address is required.',
     errorSelector: '.form-item.field.email .field-error'
   },
   missingSubject: {

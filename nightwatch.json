@@ -24,7 +24,7 @@
     }
   },
   "test_workers": {
-    "enabled": true,
+    "enabled": false,
     "workers": "auto"
   },
   "test_settings": {
@@ -41,7 +41,8 @@
         "browserName": "chrome",
         "chromeOptions": {
           "args": [
-            "--no-sandbox"
+            "--no-sandbox",
+            "window-size=1280,800"
           ]
         }
       }

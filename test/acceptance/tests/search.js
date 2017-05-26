@@ -2,14 +2,7 @@ var commonSelectors = require('../selectors/common');
 
 describe('Search', function () {
   before(function (client, done) {
-    client.globals.init(client, function () {
-      client
-        .url("about:blank")
-        .waitForElementVisible("body", 1)
-        .resizeWindow(1280, 800, () => {
-          done();
-        });
-    });
+    client.globals.init(client, done);
   });
 
   after(function (client, done) {

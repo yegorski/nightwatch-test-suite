@@ -6,7 +6,7 @@ module.exports = {
     testimonials: 'h2 a[href="/testimonials"]',
     contact: 'h2 a[href="/contact"]',
     openSidebar: '#header .Icon.Icon--hamburger',
-    searchIcon: '.header-special .search-icon'
+    searchIcon: '.search-icon'
   },
   footer: {
     home: 'h3 a[href="/welcome"]',

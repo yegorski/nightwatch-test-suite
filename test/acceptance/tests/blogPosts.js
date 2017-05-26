@@ -7,20 +7,16 @@ describe('Blog Posts', function () {
     client.globals.teardown(client, done);
   });
 
-  it('should be able to open all blog posts', function (client) {
-    client.err = 'new error';
-    var i;
-
+  it('should be able to open the first blog post', function (client) {
     client.blog.navAndVerify();
 
     client.elements('css selector', client.blog.selectors.blogs, function (numberOfBlogs) {
       client.assert.ok(numberOfBlogs.value.length > 0, 'There were 0 blog posts.');
-      for (i = 1; i < numberOfBlogs.value.length + 1; i++) {
-        client
-          .blog.openNthBlog(i)
-          .blog.verifyBlogPostLoaded()
-          .blog.navAndVerify();
-      }
     });
+
+    client
+      .blog.openNthBlog(1)
+      .blog.verifyBlogPostLoaded()
+      .blog.navAndVerify();
   });
 });
