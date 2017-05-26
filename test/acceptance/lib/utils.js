@@ -1,18 +1,21 @@
-var fs = require('fs');
-var path = require('path');
+'use strict';
 
-module.exports = function(client) {
+const fs = require('fs');
+const path = require('path');
+
+module.exports = function utils(client) {
   this.addPageObjectsOnClient = () => {
-    var i;
-    var len;
-    var pageFilesPath = path.join(__dirname, '../pages');
-    var pageList = fs.readdirSync(pageFilesPath);
-    var pageName;
+    const pageFilesPath = path.join(__dirname, '../pages');
+    const pageList = fs.readdirSync(pageFilesPath);
+
+    let i;
+    let len;
+    let pageName;
 
     for (i = 0, len = pageList.length; i < len; i++) {
       if (path.extname(pageList[i]) === '.js') {
         pageName = pageList[i].split('.js')[0];
-        client[pageName] = client.page[pageName]();
+        client[pageName] = client.page[pageName](); // eslint-disable-line no-param-reassign
       }
     }
   };

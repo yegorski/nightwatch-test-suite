@@ -1,6 +1,6 @@
-var commonSelectors = require('../selectors/common');
+const commonSelectors = require('../selectors/common');
 
-module.exports = function(client) {
+module.exports = function testimonials(client) {
   this.selectors = {
     pageLoaded: '.horizontalrule-block'
   };
@@ -23,5 +23,5 @@ module.exports = function(client) {
     this.nav();
     this.verifyPageLoaded();
     return client;
-  }
+  };
 };

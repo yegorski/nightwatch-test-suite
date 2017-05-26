@@ -1,6 +1,6 @@
-var commonSelectors = require('../selectors/common');
+const commonSelectors = require('../selectors/common');
 
-module.exports = function(client) {
+module.exports = function home(client) {
   this.selectors = {
     pageLoaded: 'img[alt="DREAM IT, BUILD IT!"]',
     firstImage: 'img[alt="DREAM IT, BUILD IT!"]',
@@ -25,5 +25,5 @@ module.exports = function(client) {
     this.nav();
     this.verifyPageLoaded();
     return client;
-  }
+  };
 };

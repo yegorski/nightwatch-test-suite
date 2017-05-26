@@ -72,7 +72,9 @@ Because Nightwatch is a Node.js wrapper around Selenium, it needs either Seleniu
     1. Tell Nightwatch to start up Selenium on each test run:
       1. `"start_process": true,`
       1. Without doing this, you’d need to download a separate driver, require it, and start it explicitly inside your tests. See [Nightwatch Getting Started](http://nightwatchjs.org/getingstarted#chromedriver) guide for more
-    1. Tell Nightwatch to run tests in parallel by setting the `"test_workers"` section like I have in my [nightwatch.json](https://github.com/yegorski/jch-nightwatch/blob/master/nightwatch.json#L19)
+    1. Tell Nightwatch to run tests in parallel by setting the `"test_workers"` section.
+      1. Note: I have it set to `false` because I'm using Nightwatch's mocha runner: [nightwatch.json](https://github.com/yegorski/jch-nightwatch/blob/master/nightwatch.json#L19)
+      1. See the note at the end of the `Using Mocha Test Runner with Nightwatch.js` section. 
 1. Create a configuration file that will contain some global variables that Nightwatch will use. I called mine `globals.js`. The convention is to have a config folder where that file - among with any other configuration you may want - will live
 1. Populate globals.js with the configuration variables you'd like to have. See [here]() for a list of useful variables. You can define any custom global vars as well
 1. Here’s the simple [config/globals.js](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/config/globals.js) file I have
@@ -99,11 +101,12 @@ There are several techniques I used which I'd like to point out and discuss.
 Nightwatch looks in the `pages` directory and adds them on `browser.page` object (or `client.page` in my case). This is a bit quirky of me, but I think it's a little verbose to say `browser.page.myPage()`. So I have the following function that I call in the [global beforeEach hook](https://github.com/yegorski/jch-nightwatch/blob/master/test/acceptance/config/globals.js#L34) which allows me to write `browser.myPage` instead:
 ```
 this.addPageObjectsOnClient = () => {
-  var i;
-  var len;
-  var pageFilesPath = path.join(__dirname, '../pages');
-  var pageList = fs.readdirSync(pageFilesPath);
-  var pageName;
+  const pageFilesPath = path.join(__dirname, '../pages');
+  const pageList = fs.readdirSync(pageFilesPath);
+  
+  let i;
+  let len;
+  let pageName;
 
   for (i = 0, len = pageList.length; i < len; i++) {
     if (path.extname(pageList[i]) === '.js') {
@@ -177,16 +180,16 @@ I've played around with Nightwatch error handling and ran into an issue describe
 In an attempt to have Nightwatch report errors that would otherwise be swallowed, I added the following teardown step:
 
 ```
-var logError = function (client, callback) {
-  client.end(function () {
+const logError = (client, callback) => {
+  client.end(() => {
     console.log(client.err);
     callback();
   });
 };
 
-var closeBrowser = function (client, callback) {
+const closeBrowser = (client, callback) => {
   if (client.sessionId) {
-    client.end(function () {
+    client.end(() => {
       callback();
     });
   } else {
@@ -256,7 +259,7 @@ module.exports = {
   },
 
   'Verify able to submit form after populating all fields': (client) => {
-    var fields = {
+    const fields = {
       firstName: 'Gandalf',
       lastName: 'The Grey',
       emailAddress: 'mithrandir@rivendell.org',
@@ -277,21 +280,21 @@ module.exports = {
 After:
 
 ```
-describe('Submit Form', function () {
-  before(function (client, done) {
-    client.globals.init(client, done);
+describe('Submit Form', () => {
+  before((client, done) => {
+    client.globals.setup(client, done);
   });
   
-  beforeEach(function (client, done) {
+  beforeEach((client, done) => {
     client.contact.navAndVerify();
     done();
   });
 
-  after(function (client, done) {
+  after((client, done) => {
     client.globals.teardown(client, done);
   });
 
-  it('should be unable to submit form with missing required fields', function (client) {
+  it('should be unable to submit form with missing required fields', (client) => {
     Object.keys(incompleteFields).forEach((fields) => {
       client
         .contact.submitForm(incompleteFields[fields])
@@ -303,8 +306,8 @@ describe('Submit Form', function () {
     });
   });
 
-  it('should be able to submit form after populating all fields', function (client) {
-    var fields = {
+  it('should be able to submit form after populating all fields', (client) => {
+    const fields = {
       firstName: 'Gandalf',
       lastName: 'The Grey',
       emailAddress: 'mithrandir@rivendell.org',

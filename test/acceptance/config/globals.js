@@ -16,20 +16,20 @@
  *       ...
  */
 
-// var chromedriver = require('chromedriver');
+// const chromedriver = require('chromedriver');
 
-var utils = require('../lib/utils');
+const Utils = require('../lib/utils');
 
-var logError = function (client, callback) {
-  client.end(function () {
-    console.log(client.err);
+const logError = (client, callback) => {
+  client.end(() => {
+    console.log(client.err); // eslint-disable-line no-console
     callback();
   });
 };
 
-var closeBrowser = function (client, callback) {
+const closeBrowser = (client, callback) => {
   if (client.sessionId) {
-    client.end(function () {
+    client.end(() => {
       callback();
     });
   } else {
@@ -44,10 +44,10 @@ module.exports = {
 
   url: 'https://www.jakescomputerhospital.com',
 
-  init: (client, done) => {
+  setup: (client, done) => {
     // chromedriver.start();
 
-    client.util = new utils(client);
+    client.util = new Utils(client); // eslint-disable-line no-param-reassign
     client.util.addPageObjectsOnClient();
 
     done();

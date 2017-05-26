@@ -1,6 +1,6 @@
-var commonSelectors = require('../selectors/common');
+const commonSelectors = require('../selectors/common');
 
-module.exports = function(client) {
+module.exports = function about(client) {
   this.selectors = {
     pageLoaded: 'img[alt="headshot.jpg"]',
     founderPhoto: 'img[alt="headshot.jpg"]'

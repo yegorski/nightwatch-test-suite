@@ -1,6 +1,6 @@
-var commonSelectors = require('../selectors/common');
+const commonSelectors = require('../selectors/common');
 
-module.exports = function(client) {
+module.exports = function search(client) {
   this.selectors = {
     pageLoaded: '.search-result',
     searchInput: '.header-search-form-input',

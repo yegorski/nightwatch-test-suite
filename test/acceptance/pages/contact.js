@@ -1,6 +1,6 @@
-var commonSelectors = require('../selectors/common');
+const commonSelectors = require('../selectors/common');
 
-module.exports = function(client) {
+module.exports = function contact(client) {
   this.selectors = {
     pageLoaded: '.page-map',
     form: {

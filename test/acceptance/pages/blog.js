@@ -1,11 +1,11 @@
-var commonSelectors = require('../selectors/common');
+const commonSelectors = require('../selectors/common');
 
-module.exports = function(client) {
+module.exports = function blog(client) {
   this.selectors = {
     pageLoaded: '.entry-title.entry-title--list',
     blogs: 'article[label="Blog Post"]',
     nthBlog: 'article[label="Blog Post"]:nth-child(INDEX)',
-    blogPostLoaded: '.sqs-block-content .summary-title',
+    blogPostLoaded: '.entry-title--large',
     blogImage: '.image-block-outer-wrapper',
     blogImageCaption: '.image-caption-wrapper'
   };
@@ -36,7 +36,7 @@ module.exports = function(client) {
   };
 
   this.openNthBlog = (index) => {
-    var blogToOpen = this.selectors.nthBlog.replace('INDEX', index);
+    const blogToOpen = this.selectors.nthBlog.replace('INDEX', index);
     client.util.click(blogToOpen);
     return client;
   };

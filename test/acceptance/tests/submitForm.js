@@ -1,4 +1,4 @@
-var incompleteFields = {
+const incompleteFields = {
   missingFirstAndLastName: {
     emailAddress: 'mithrandir@rivendell.org',
     subject: 'Take heed',
@@ -48,21 +48,21 @@ var incompleteFields = {
   }
 };
 
-describe('Submit Form', function () {
-  before(function (client, done) {
-    client.globals.init(client, done);
+describe('Submit Form', () => {
+  before((client, done) => {
+    client.globals.setup(client, done);
   });
 
-  beforeEach(function (client, done) {
+  beforeEach((client, done) => {
     client.contact.navAndVerify();
     done();
   });
 
-  after(function (client, done) {
+  after((client, done) => {
     client.globals.teardown(client, done);
   });
 
-  it('should be unable to submit form with missing required fields', function (client) {
+  it('should be unable to submit form with missing required fields', (client) => {
     Object.keys(incompleteFields).forEach((fields) => {
       client
         .contact.submitForm(incompleteFields[fields])
@@ -72,11 +72,10 @@ describe('Submit Form', function () {
 
       client.contact.clearForm();
     });
-    client.url('https://google.com')
   });
 
-  it('should be able to submit form after populating all fields', function (client) {
-    var fields = {
+  it('should be able to submit form after populating all fields', (client) => {
+    const fields = {
       firstName: 'Gandalf',
       lastName: 'The Grey',
       emailAddress: 'mithrandir@rivendell.org',
