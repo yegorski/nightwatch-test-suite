@@ -333,3 +333,5 @@ Yes, however, the following points become much clearer:
 In this case I have a need to perform this navigation before each test `client.contact.navAndVerify();`. Should the previous scenario fail, consecutive scenarios will continue to run.
 
 While this may be achieved using the standard Nightwatch runner with `module.exports` syntax, I don't think it communicates the intent as clearly.
+
+I should mention a potential deal-breaking caveat for using the mocha syntax: in order to get any sensible error reporting, the tests must run in serial. If you clone this repo and do `npm test` you will see what I mean. As soon as you switch the test_workers to `"enabled": true,`, you will not see neither the beautiful mocha output, nor any errors that occur during the test run.
